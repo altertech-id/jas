@@ -31,6 +31,9 @@ services:
     container_name: jas-frontend
     restart: unless-stopped
     env_file: .env
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
     depends_on:
       - backend
     networks:
@@ -41,7 +44,7 @@ services:
       - "traefik.http.routers.jas-frontend.rule=Host(`jas.altertech.id`)"
       - "traefik.http.routers.jas-frontend.entrypoints=websecure"
       - "traefik.http.routers.jas-frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.jas-frontend.loadbalancer.server.port=5173"
+      - "traefik.http.services.jas-frontend.loadbalancer.server.port=3000"
       - "traefik.http.routers.jas-frontend.priority=10"
     deploy:
       resources:
