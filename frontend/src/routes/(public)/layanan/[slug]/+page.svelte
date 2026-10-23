@@ -34,7 +34,12 @@
   $: currentSlug = $page.params.slug;
 
   onMount(async () => {
-    await loadData(currentSlug);
+    if (currentSlug) {
+      await loadData(currentSlug);
+    } else {
+      loading = false;
+      errorMsg = 'Layanan tidak ditemukan.';
+    }
   });
 
   async function loadData(slug: string) {

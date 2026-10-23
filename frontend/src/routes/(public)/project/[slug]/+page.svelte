@@ -15,6 +15,11 @@
   $: slug = $page.params.slug;
 
   onMount(async () => {
+    if (!slug) {
+      errorMsg = 'Slug tidak valid.';
+      loading = false;
+      return;
+    }
     try {
       project = await api.getProjectBySlug(slug);
     } catch (err: any) {

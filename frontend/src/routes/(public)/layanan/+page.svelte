@@ -48,7 +48,7 @@
           slug={item.slug}
           name={item.name}
           description={item.short_description}
-          icon={item.icon}
+          imageUrl={item.hero_media?.public_url}
         />
       {/each}
     </div>

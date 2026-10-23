@@ -200,7 +200,7 @@
                 <button
                   type="button"
                   class="flex-1 py-1.5 px-3 rounded-md text-xs font-medium capitalize border transition-colors {selectedLead.status === st ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}"
-                  on:click={() => changeStatus(selectedLead, st)}
+                  on:click={() => selectedLead && changeStatus(selectedLead, st)}
                   disabled={updatingStatus}
                 >
                   {st}
