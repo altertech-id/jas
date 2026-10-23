@@ -1,0 +1,48 @@
+name: Deploy to VPS
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: SSH Deploy to VPS
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            APP_DIR="${{ secrets.VPS_PROJECT_DIR || '/var/www/jayaabadisolusi' }}"
+            
+            if [ ! -d "$APP_DIR" ]; then
+              echo "Error: Directory $APP_DIR does not exist. Please clone repository first."
+              exit 1
+            fi
+
+            cd "$APP_DIR"
+            echo "==> Fetching latest changes from git..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "==> Building and starting containers..."
+            docker compose down --remove-orphans || true
+            docker compose up -d --build
+
+            echo "==> Cleaning up unused docker images..."
+            docker image prune -f
+
+            echo "==> Deployment finished successfully!"
+            docker compose ps

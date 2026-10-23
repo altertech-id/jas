@@ -13,9 +13,10 @@ import type {
 } from '../types';
 import type { LeadStatus } from '../types/enums';
 
-const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
-  ? '' 
-  : 'http://localhost:8080';
+const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? '' 
+    : 'http://localhost:8080');
 
 class ApiClient {
   private getAuthToken(): string | null {
