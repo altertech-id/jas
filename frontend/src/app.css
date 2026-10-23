@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-navy: #0e304f;
+  --brand-navy-deep: #081d31;
+  --brand-blue: #2284c7;
+  --brand-blue-hover: #196fa8;
+  --brand-blue-tint: #f0f7fc;
+  --brand-red: #d91b1b;
+  --brand-red-hover: #b81414;
+  --brand-red-active: #940f0f;
+  --accent-amber: #f59e0b;
+  --surface-white: #ffffff;
+  --surface-light: #f9fbfd;
+  --surface-mist: #f1f5f9;
+  --ink-900: #0f172a;
+  --ink-700: #334155;
+  --ink-500: #64748b;
+  --ink-300: #94a3b8;
+  --on-navy: #ffffff;
+  --on-navy-soft: #cbd5e1;
+  --line-soft: #f1f5f9;
+  --line-strong: #e2e8f0;
+  --wa-green: #25d366;
+  --wa-green-hover: #1ebd5a;
+  --font-heading: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+.bg-hero-navy {
+  background-color: #0b253e;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

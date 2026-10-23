@@ -1,0 +1,14 @@
+bin/
+/api
+/main
+/server
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+.env
+.env.*
+!.env.example
+.DS_Store
