@@ -1,0 +1,56 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jas-backend
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - traefik-public
+      - jas-internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jas-api.rule=Host(`jas.altertech.id`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.jas-api.entrypoints=websecure"
+      - "traefik.http.routers.jas-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.jas-api.loadbalancer.server.port=8080"
+      - "traefik.http.routers.jas-api.priority=20"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://jas.altertech.id
+    container_name: jas-frontend
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - backend
+    networks:
+      - traefik-public
+      - jas-internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jas-frontend.rule=Host(`jas.altertech.id`)"
+      - "traefik.http.routers.jas-frontend.entrypoints=websecure"
+      - "traefik.http.routers.jas-frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.jas-frontend.loadbalancer.server.port=5173"
+      - "traefik.http.routers.jas-frontend.priority=10"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+networks:
+  traefik-public:
+    external: true
+  jas-internal:
+    driver: bridge
