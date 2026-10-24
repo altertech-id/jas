@@ -12,7 +12,7 @@
 
   onMount(async () => {
     try {
-      projects = await api.getProjects();
+      projects = (await api.getProjects()) ?? [];
     } finally {
       loading = false;
     }
@@ -44,7 +44,7 @@
       <div class="flex justify-center py-16">
         <div class="h-8 w-8 animate-spin rounded-full border-4 border-navy border-t-transparent"></div>
       </div>
-    {:else if projects.length === 0}
+    {:else if (projects?.length ?? 0) === 0}
       <div class="text-center py-16 text-ink-500">
         Belum ada dokumentasi proyek yang dipublikasikan.
       </div>

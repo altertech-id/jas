@@ -25,7 +25,7 @@
   async function loadGallery() {
     loading = true;
     try {
-      items = await api.getGallery();
+      items = (await api.getGallery()) ?? [];
     } catch (err: any) {
       toast.show(err.message, 'error');
     } finally {
@@ -108,7 +108,7 @@
     <div class="flex justify-center p-12">
       <div class="h-7 w-7 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
     </div>
-  {:else if items.length === 0}
+  {:else if (items?.length ?? 0) === 0}
     <div class="rounded-xl border border-slate-200/80 bg-white p-12 text-center text-sm text-slate-500">
       Belum ada foto galeri terdaftar.
     </div>

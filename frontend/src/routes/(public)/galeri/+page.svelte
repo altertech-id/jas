@@ -24,7 +24,7 @@
     selectedCategory = cat;
     loading = true;
     try {
-      items = await api.getGallery(cat);
+      items = (await api.getGallery(cat)) ?? [];
     } finally {
       loading = false;
     }
@@ -83,7 +83,7 @@
       <div class="flex justify-center py-16">
         <div class="h-8 w-8 animate-spin rounded-full border-4 border-navy border-t-transparent"></div>
       </div>
-    {:else if items.length === 0}
+    {:else if (items?.length ?? 0) === 0}
       <div class="text-center py-16 text-slate-500 font-body">
         Belum ada foto dokumentasi pada kategori ini.
       </div>
@@ -119,7 +119,7 @@
 </section>
 
 <!-- Lightbox Modal -->
-{#if items.length > 0}
+{#if (items?.length ?? 0) > 0}
   <Lightbox
     show={lightboxOpen}
     imageUrl={items[activeIndex]?.media?.public_url || ''}

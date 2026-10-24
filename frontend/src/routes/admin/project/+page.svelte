@@ -29,7 +29,7 @@
   async function loadProjects() {
     loading = true;
     try {
-      projects = await api.getProjects();
+      projects = (await api.getProjects()) ?? [];
     } catch (err: any) {
       toast.show(err.message, 'error');
     } finally {
@@ -126,7 +126,7 @@
         <div class="flex justify-center p-12">
           <div class="h-7 w-7 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
         </div>
-      {:else if projects.length === 0}
+      {:else if (projects?.length ?? 0) === 0}
         <div class="p-12 text-center text-sm text-slate-500">
           Belum ada proyek terdaftar.
         </div>

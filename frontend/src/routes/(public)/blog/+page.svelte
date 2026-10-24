@@ -16,8 +16,8 @@
         api.getCategories().catch(() => []),
         api.getPosts()
       ]);
-      categories = catsRes;
-      posts = postsRes.data;
+      categories = catsRes ?? [];
+      posts = postsRes.data ?? [];
     } finally {
       loading = false;
     }
@@ -28,7 +28,7 @@
     loading = true;
     try {
       const res = await api.getPosts({ category: slug });
-      posts = res.data;
+      posts = res.data ?? [];
     } finally {
       loading = false;
     }
@@ -82,7 +82,7 @@
       <div class="flex justify-center py-16">
         <div class="h-8 w-8 animate-spin rounded-full border-4 border-navy border-t-transparent"></div>
       </div>
-    {:else if posts.length === 0}
+    {:else if (posts?.length ?? 0) === 0}
       <div class="text-center py-16 text-slate-500 font-body">
         Belum ada artikel pada kategori ini.
       </div>

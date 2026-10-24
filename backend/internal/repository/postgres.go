@@ -52,7 +52,7 @@ func (p *PostgresRepository) ListServices(ctx context.Context, onlyPublished boo
 	}
 	defer rows.Close()
 
-	var services []domain.Service
+	services := make([]domain.Service, 0)
 	for rows.Next() {
 		var s domain.Service
 		err := rows.Scan(&s.ID, &s.Slug, &s.Name, &s.Icon, &s.ShortDescription, &s.Content, &s.SEOTitle, &s.SEODescription, &s.IsPublished, &s.SortOrder, &s.CreatedAt, &s.UpdatedAt)
@@ -104,7 +104,7 @@ func (p *PostgresRepository) ListProjects(ctx context.Context, onlyPublished boo
 	}
 	defer rows.Close()
 
-	var projects []domain.Project
+	projects := make([]domain.Project, 0)
 	for rows.Next() {
 		var pr domain.Project
 		if err := rows.Scan(&pr.ID, &pr.Slug, &pr.Title, &pr.Location, &pr.Description, &pr.CompletedAt, &pr.IsPublished, &pr.CreatedAt); err != nil {
@@ -148,7 +148,7 @@ func (p *PostgresRepository) ListCategories(ctx context.Context) ([]domain.Categ
 	}
 	defer rows.Close()
 
-	var cats []domain.Category
+	cats := make([]domain.Category, 0)
 	for rows.Next() {
 		var c domain.Category
 		if err := rows.Scan(&c.ID, &c.Name, &c.Slug); err != nil {
@@ -175,7 +175,7 @@ func (p *PostgresRepository) ListPosts(ctx context.Context, categorySlug string,
 	}
 	defer rows.Close()
 
-	var posts []domain.Post
+	posts := make([]domain.Post, 0)
 	for rows.Next() {
 		var post domain.Post
 		if err := rows.Scan(&post.ID, &post.Slug, &post.Title, &post.Excerpt, &post.ContentHTML, &post.Status, &post.SEOTitle, &post.SEODescription, &post.PublishedAt, &post.CreatedAt, &post.UpdatedAt); err != nil {
@@ -223,7 +223,7 @@ func (p *PostgresRepository) ListGalleryItems(ctx context.Context, category stri
 	}
 	defer rows.Close()
 
-	var items []domain.GalleryItem
+	items := make([]domain.GalleryItem, 0)
 	for rows.Next() {
 		var item domain.GalleryItem
 		var med domain.Media
@@ -286,7 +286,7 @@ func (p *PostgresRepository) ListLeads(ctx context.Context, status string, limit
 	}
 	defer rows.Close()
 
-	var leads []domain.Lead
+	leads := make([]domain.Lead, 0)
 	for rows.Next() {
 		var l domain.Lead
 		var statStr string
@@ -325,7 +325,7 @@ func (p *PostgresRepository) ListMedia(ctx context.Context, limit, offset int) (
 	}
 	defer rows.Close()
 
-	var mediaList []domain.Media
+	mediaList := make([]domain.Media, 0)
 	for rows.Next() {
 		var m domain.Media
 		if err := rows.Scan(&m.ID, &m.StoragePath, &m.PublicURL, &m.AltText, &m.MimeType, &m.SizeBytes, &m.UploadedBy, &m.CreatedAt); err == nil {
@@ -347,7 +347,7 @@ func (p *PostgresRepository) ListProfiles(ctx context.Context) ([]domain.Profile
 	}
 	defer rows.Close()
 
-	var profiles []domain.Profile
+	profiles := make([]domain.Profile, 0)
 	for rows.Next() {
 		var prof domain.Profile
 		var r string

@@ -38,8 +38,8 @@
         api.getCategories().catch(() => []),
         api.getPosts({ limit: 50 })
       ]);
-      categories = catsRes;
-      posts = postsRes.data;
+      categories = catsRes ?? [];
+      posts = postsRes.data ?? [];
     } catch (err: any) {
       toast.show(err.message, 'error');
     } finally {
@@ -143,7 +143,7 @@
         <div class="flex justify-center p-12">
           <div class="h-7 w-7 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
         </div>
-      {:else if posts.length === 0}
+      {:else if (posts?.length ?? 0) === 0}
         <div class="p-12 text-center text-sm text-slate-500">
           Belum ada artikel. Klik tombol di atas untuk membuat artikel pertama.
         </div>

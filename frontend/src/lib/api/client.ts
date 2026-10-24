@@ -68,7 +68,7 @@ class ApiClient {
 
   async getServices(): Promise<Service[]> {
     const res = await this.request<{ data: Service[] }>('/api/services');
-    return res.data;
+    return res.data ?? [];
   }
 
   async getServiceBySlug(slug: string): Promise<Service> {
@@ -78,7 +78,7 @@ class ApiClient {
 
   async getProjects(): Promise<Project[]> {
     const res = await this.request<{ data: Project[] }>('/api/projects');
-    return res.data;
+    return res.data ?? [];
   }
 
   async getProjectBySlug(slug: string): Promise<Project> {
@@ -88,7 +88,7 @@ class ApiClient {
 
   async getCategories(): Promise<Category[]> {
     const res = await this.request<{ data: Category[] }>('/api/categories');
-    return res.data;
+    return res.data ?? [];
   }
 
   async getPosts(params?: { category?: string; page?: number; limit?: number }): Promise<{ data: Post[]; total: number; page: number; limit: number }> {
@@ -98,7 +98,8 @@ class ApiClient {
     if (params?.limit) query.set('limit', params.limit.toString());
 
     const qs = query.toString() ? `?${query.toString()}` : '';
-    return this.request<{ data: Post[]; total: number; page: number; limit: number }>(`/api/posts${qs}`);
+    const res = await this.request<{ data: Post[]; total: number; page: number; limit: number }>(`/api/posts${qs}`);
+    return { ...res, data: res.data ?? [] };
   }
 
   async getPostBySlug(slug: string): Promise<Post> {
@@ -109,7 +110,7 @@ class ApiClient {
   async getGallery(category?: string): Promise<GalleryItem[]> {
     const qs = category ? `?category=${encodeURIComponent(category)}` : '';
     const res = await this.request<{ data: GalleryItem[] }>(`/api/gallery${qs}`);
-    return res.data;
+    return res.data ?? [];
   }
 
   async getPageContent(key: string): Promise<PageContent> {
@@ -146,7 +147,8 @@ class ApiClient {
     if (params?.offset) query.set('offset', params.offset.toString());
 
     const qs = query.toString() ? `?${query.toString()}` : '';
-    return this.request<{ data: Lead[]; total: number }>(`/api/admin/leads${qs}`);
+    const res = await this.request<{ data: Lead[]; total: number }>(`/api/admin/leads${qs}`);
+    return { ...res, data: res.data ?? [] };
   }
 
   async updateLeadStatus(id: string, status: LeadStatus): Promise<void> {
@@ -170,7 +172,7 @@ class ApiClient {
 
   async getMediaList(): Promise<Media[]> {
     const res = await this.request<{ data: Media[] }>('/api/admin/media');
-    return res.data;
+    return res.data ?? [];
   }
 
   async deleteMedia(id: string): Promise<void> {
@@ -254,7 +256,7 @@ class ApiClient {
 
   async getUsers(): Promise<Profile[]> {
     const res = await this.request<{ data: Profile[] }>('/api/admin/users');
-    return res.data;
+    return res.data ?? [];
   }
 
   async updateUserStatus(id: string, isActive: boolean): Promise<void> {

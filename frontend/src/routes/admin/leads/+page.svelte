@@ -23,7 +23,7 @@
     loading = true;
     try {
       const res = await api.getLeads({ status: filterStatus });
-      leads = res.data;
+      leads = res.data ?? [];
     } catch (err: any) {
       toast.show(err.message, 'error');
     } finally {
@@ -110,7 +110,7 @@
       <div class="flex justify-center p-12">
         <div class="h-7 w-7 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
       </div>
-    {:else if leads.length === 0}
+    {:else if (leads?.length ?? 0) === 0}
       <div class="p-12 text-center text-sm text-slate-500">
         Tidak ada data lead pada status ini.
       </div>

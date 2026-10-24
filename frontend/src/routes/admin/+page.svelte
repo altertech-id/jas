@@ -28,7 +28,7 @@
       ]);
 
       stats = statsRes;
-      recentLeads = leadsRes.data;
+      recentLeads = leadsRes.data ?? [];
     } finally {
       loading = false;
     }
@@ -97,7 +97,7 @@
 
       {#if loading}
         <div class="p-8 text-center text-sm text-slate-500">Memuat data lead...</div>
-      {:else if recentLeads.length === 0}
+      {:else if (recentLeads?.length ?? 0) === 0}
         <div class="p-8 text-center text-sm text-slate-500">
           Belum ada lead baru yang masuk.
         </div>

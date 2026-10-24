@@ -18,7 +18,7 @@
   async function loadUsers() {
     loading = true;
     try {
-      profiles = await api.getUsers();
+      profiles = (await api.getUsers()) ?? [];
     } catch (err: any) {
       toast.show(err.message, 'error');
     } finally {
@@ -53,6 +53,10 @@
     {#if loading}
       <div class="flex justify-center p-12">
         <div class="h-7 w-7 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
+      </div>
+    {:else if (profiles?.length ?? 0) === 0}
+      <div class="p-12 text-center text-sm text-slate-500">
+        Belum ada profil pengguna terdaftar.
       </div>
     {:else}
       <div class="overflow-x-auto">

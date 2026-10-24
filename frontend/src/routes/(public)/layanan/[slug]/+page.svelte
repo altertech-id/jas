@@ -51,7 +51,7 @@
         api.getGallery().catch(() => [])
       ]);
       service = serviceData;
-      galleryItems = galleryData.slice(0, 4);
+      galleryItems = (galleryData ?? []).slice(0, 4);
     } catch (err: any) {
       errorMsg = err.message || 'Layanan tidak ditemukan.';
     } finally {
@@ -269,7 +269,7 @@
   {/if}
 
   <!-- DOKUMENTASI HASIL PEKERJAAN -->
-  {#if galleryItems.length > 0}
+  {#if (galleryItems?.length ?? 0) > 0}
     <section class="py-16 sm:py-20 bg-white">
       <div class="mx-auto max-w-container px-5 sm:px-8">
         <div class="text-center max-w-2xl mx-auto mb-12">
@@ -384,7 +384,7 @@
   <MobileStickyCTA serviceName={service.name} />
 
   <!-- Lightbox Modal -->
-  {#if galleryItems.length > 0}
+  {#if (galleryItems?.length ?? 0) > 0}
     <Lightbox
       show={lightboxOpen}
       imageUrl={galleryItems[activeImageIndex]?.media?.public_url || ''}

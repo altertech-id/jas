@@ -37,7 +37,7 @@
   async function loadServices() {
     loading = true;
     try {
-      services = await api.getServices();
+      services = (await api.getServices()) ?? [];
     } catch (err: any) {
       toast.show(err.message, 'error');
     } finally {
@@ -145,6 +145,10 @@
       {#if loading}
         <div class="flex justify-center p-12">
           <div class="h-7 w-7 animate-spin rounded-full border-2 border-slate-900 border-t-transparent"></div>
+        </div>
+      {:else if (services?.length ?? 0) === 0}
+        <div class="p-12 text-center text-sm text-slate-500">
+          Belum ada layanan terdaftar.
         </div>
       {:else}
         <div class="overflow-x-auto">
