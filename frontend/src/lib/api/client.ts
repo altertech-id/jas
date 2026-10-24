@@ -38,10 +38,22 @@ class ApiClient {
     }
 
     const response = await fetch(url, { ...options, headers });
-    const data = await response.json();
+
+    const contentType = response.headers.get('content-type') || '';
+    let data: any;
+
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      if (!response.ok) {
+        throw new Error(`Server error (${response.status}): ${text.slice(0, 100)}`);
+      }
+      data = text;
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || 'Terjadi kesalahan sistem.');
+      throw new Error(data?.error || `Terjadi kesalahan sistem (${response.status}).`);
     }
 
     return data;
@@ -123,7 +135,7 @@ class ApiClient {
   // --- ADMIN ENDPOINTS ---
 
   async getDashboardStats(): Promise<DashboardStats> {
-    const res = await this.request<{ data: DashboardStats }>('/admin/dashboard/stats');
+    const res = await this.request<{ data: DashboardStats }>('/api/admin/dashboard/stats');
     return res.data;
   }
 
@@ -134,11 +146,11 @@ class ApiClient {
     if (params?.offset) query.set('offset', params.offset.toString());
 
     const qs = query.toString() ? `?${query.toString()}` : '';
-    return this.request<{ data: Lead[]; total: number }>(`/admin/leads${qs}`);
+    return this.request<{ data: Lead[]; total: number }>(`/api/admin/leads${qs}`);
   }
 
   async updateLeadStatus(id: string, status: LeadStatus): Promise<void> {
-    await this.request(`/admin/leads/${id}/status`, {
+    await this.request(`/api/admin/leads/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status })
     });
@@ -149,7 +161,7 @@ class ApiClient {
     formData.append('file', file);
     if (altText) formData.append('alt_text', altText);
 
-    const res = await this.request<{ data: Media }>('/admin/media', {
+    const res = await this.request<{ data: Media }>('/api/admin/media', {
       method: 'POST',
       body: formData
     });
@@ -157,17 +169,17 @@ class ApiClient {
   }
 
   async getMediaList(): Promise<Media[]> {
-    const res = await this.request<{ data: Media[] }>('/admin/media');
+    const res = await this.request<{ data: Media[] }>('/api/admin/media');
     return res.data;
   }
 
   async deleteMedia(id: string): Promise<void> {
-    await this.request(`/admin/media/${id}`, { method: 'DELETE' });
+    await this.request(`/api/admin/media/${id}`, { method: 'DELETE' });
   }
 
   async saveService(service: Partial<Service>): Promise<Service> {
     const method = service.id ? 'PUT' : 'POST';
-    const endpoint = service.id ? `/admin/services/${service.id}` : '/admin/services';
+    const endpoint = service.id ? `/api/admin/services/${service.id}` : '/api/admin/services';
     const res = await this.request<{ data: Service }>(endpoint, {
       method,
       body: JSON.stringify(service)
@@ -176,12 +188,12 @@ class ApiClient {
   }
 
   async deleteService(id: string): Promise<void> {
-    await this.request(`/admin/services/${id}`, { method: 'DELETE' });
+    await this.request(`/api/admin/services/${id}`, { method: 'DELETE' });
   }
 
   async saveProject(project: Partial<Project>): Promise<Project> {
     const method = project.id ? 'PUT' : 'POST';
-    const endpoint = project.id ? `/admin/projects/${project.id}` : '/admin/projects';
+    const endpoint = project.id ? `/api/admin/projects/${project.id}` : '/api/admin/projects';
     const res = await this.request<{ data: Project }>(endpoint, {
       method,
       body: JSON.stringify(project)
@@ -190,12 +202,12 @@ class ApiClient {
   }
 
   async deleteProject(id: string): Promise<void> {
-    await this.request(`/admin/projects/${id}`, { method: 'DELETE' });
+    await this.request(`/api/admin/projects/${id}`, { method: 'DELETE' });
   }
 
   async savePost(post: Partial<Post>): Promise<Post> {
     const method = post.id ? 'PUT' : 'POST';
-    const endpoint = post.id ? `/admin/posts/${post.id}` : '/admin/posts';
+    const endpoint = post.id ? `/api/admin/posts/${post.id}` : '/api/admin/posts';
     const res = await this.request<{ data: Post }>(endpoint, {
       method,
       body: JSON.stringify(post)
@@ -204,11 +216,11 @@ class ApiClient {
   }
 
   async deletePost(id: string): Promise<void> {
-    await this.request(`/admin/posts/${id}`, { method: 'DELETE' });
+    await this.request(`/api/admin/posts/${id}`, { method: 'DELETE' });
   }
 
   async createCategory(cat: { name: string; slug?: string }): Promise<Category> {
-    const res = await this.request<{ data: Category }>('/admin/categories', {
+    const res = await this.request<{ data: Category }>('/api/admin/categories', {
       method: 'POST',
       body: JSON.stringify(cat)
     });
@@ -216,37 +228,37 @@ class ApiClient {
   }
 
   async savePageContent(key: string, data: { title: string; content: any; seo_title: string; seo_description: string }): Promise<void> {
-    await this.request(`/admin/pages/${key}`, {
+    await this.request(`/api/admin/pages/${key}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
   }
 
   async saveGalleryItem(item: { media_id: string; caption: string; category: string; sort_order: number }): Promise<void> {
-    await this.request('/admin/gallery', {
+    await this.request('/api/admin/gallery', {
       method: 'POST',
       body: JSON.stringify(item)
     });
   }
 
   async deleteGalleryItem(id: string): Promise<void> {
-    await this.request(`/admin/gallery/${id}`, { method: 'DELETE' });
+    await this.request(`/api/admin/gallery/${id}`, { method: 'DELETE' });
   }
 
   async updateSiteSetting(key: string, value: any): Promise<void> {
-    await this.request(`/admin/site-settings/${key}`, {
+    await this.request(`/api/admin/site-settings/${key}`, {
       method: 'PUT',
       body: JSON.stringify(value)
     });
   }
 
   async getUsers(): Promise<Profile[]> {
-    const res = await this.request<{ data: Profile[] }>('/admin/users');
+    const res = await this.request<{ data: Profile[] }>('/api/admin/users');
     return res.data;
   }
 
   async updateUserStatus(id: string, isActive: boolean): Promise<void> {
-    await this.request(`/admin/users/${id}/status`, {
+    await this.request(`/api/admin/users/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ is_active: isActive })
     });

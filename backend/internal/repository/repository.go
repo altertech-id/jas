@@ -10,6 +10,7 @@ import (
 
 	"jayaabadisolusi/backend/internal/domain"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -112,6 +113,12 @@ func ConnectDB(ctx context.Context, connString string) (*pgxpool.Pool, error) {
 	if err != nil {
 		return nil, fmt.Errorf("gagal parse konfigurasi db: %w", err)
 	}
+
+	// Supabase PgBouncer (Transaction Pooler) compatibility:
+	// Disable prepared statement cache to prevent "prepared statement already exists" (SQLSTATE 42P05)
+	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeExec
+	config.ConnConfig.StatementCacheCapacity = 0
+	config.ConnConfig.DescriptionCacheCapacity = 0
 
 	config.MaxConns = 10
 	config.MinConns = 2

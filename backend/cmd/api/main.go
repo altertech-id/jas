@@ -92,53 +92,56 @@ func main() {
 
 	// Admin Routes (Protected by AuthMiddleware)
 	adminAuth := middleware.AuthMiddleware(cfg)
-	admin := app.Group("/admin", adminAuth)
-	{
+	registerAdminRoutes := func(router fiber.Router) {
 		// Dashboard & Common
-		admin.Get("/dashboard/stats", adminHandler.GetDashboardStats)
+		router.Get("/dashboard/stats", adminHandler.GetDashboardStats)
 
 		// Media (Admin + Editor)
-		admin.Post("/media", adminHandler.UploadMedia)
-		admin.Get("/media", adminHandler.ListMedia)
-		admin.Delete("/media/:id", adminHandler.DeleteMedia)
+		router.Post("/media", adminHandler.UploadMedia)
+		router.Get("/media", adminHandler.ListMedia)
+		router.Delete("/media/:id", adminHandler.DeleteMedia)
 
 		// Blog (Admin + Editor)
-		admin.Post("/posts", adminHandler.SavePost)
-		admin.Put("/posts/:id", adminHandler.SavePost)
-		admin.Delete("/posts/:id", adminHandler.DeletePost)
-		admin.Post("/categories", adminHandler.CreateCategory)
+		router.Post("/posts", adminHandler.SavePost)
+		router.Put("/posts/:id", adminHandler.SavePost)
+		router.Delete("/posts/:id", adminHandler.DeletePost)
+		router.Post("/categories", adminHandler.CreateCategory)
 
 		// Projects (Admin + Editor)
-		admin.Post("/projects", adminHandler.SaveProject)
-		admin.Put("/projects/:id", adminHandler.SaveProject)
-		admin.Delete("/projects/:id", adminHandler.DeleteProject)
+		router.Post("/projects", adminHandler.SaveProject)
+		router.Put("/projects/:id", adminHandler.SaveProject)
+		router.Delete("/projects/:id", adminHandler.DeleteProject)
 
 		// Strict Admin-Only Routes
 		adminOnly := middleware.RequireRole(domain.RoleAdmin)
 
 		// Services
-		admin.Post("/services", adminOnly, adminHandler.SaveService)
-		admin.Put("/services/:id", adminOnly, adminHandler.SaveService)
-		admin.Delete("/services/:id", adminOnly, adminHandler.DeleteService)
+		router.Post("/services", adminOnly, adminHandler.SaveService)
+		router.Put("/services/:id", adminOnly, adminHandler.SaveService)
+		router.Delete("/services/:id", adminOnly, adminHandler.DeleteService)
 
 		// Pages (CMS)
-		admin.Put("/pages/:key", adminOnly, adminHandler.SavePage)
+		router.Put("/pages/:key", adminOnly, adminHandler.SavePage)
 
 		// Gallery
-		admin.Post("/gallery", adminOnly, adminHandler.SaveGalleryItem)
-		admin.Delete("/gallery/:id", adminOnly, adminHandler.DeleteGalleryItem)
+		router.Post("/gallery", adminOnly, adminHandler.SaveGalleryItem)
+		router.Delete("/gallery/:id", adminOnly, adminHandler.DeleteGalleryItem)
 
 		// Leads Management
-		admin.Get("/leads", adminOnly, adminHandler.ListLeads)
-		admin.Patch("/leads/:id/status", adminOnly, adminHandler.UpdateLeadStatus)
+		router.Get("/leads", adminOnly, adminHandler.ListLeads)
+		router.Patch("/leads/:id/status", adminOnly, adminHandler.UpdateLeadStatus)
 
 		// Site Settings
-		admin.Put("/site-settings/:key", adminOnly, adminHandler.UpdateSiteSetting)
+		router.Put("/site-settings/:key", adminOnly, adminHandler.UpdateSiteSetting)
 
 		// User Management
-		admin.Get("/users", adminOnly, adminHandler.ListProfiles)
-		admin.Patch("/users/:id/status", adminOnly, adminHandler.UpdateProfileStatus)
+		router.Get("/users", adminOnly, adminHandler.ListProfiles)
+		router.Patch("/users/:id/status", adminOnly, adminHandler.UpdateProfileStatus)
 	}
+
+	// Mount under /api/admin (primary for reverse proxy) and /admin (compatibility)
+	registerAdminRoutes(app.Group("/api/admin", adminAuth))
+	registerAdminRoutes(app.Group("/admin", adminAuth))
 
 	// Graceful Shutdown
 	quit := make(chan os.Signal, 1)
